@@ -6,13 +6,28 @@ import time
 
 
 class TimeWatch:
-    # constructor.
-    def __init__(self):
-        self.__actions = dict()
 
-    # destructor.
+    ''' constructor.
+    Args:
+        log_file (bool, optional): write message on the log file or not.
+    '''
+
+    def __init__(self, log_file: bool = False):
+        self.__actions = dict()
+        if log_file is True:
+            self.__file = open(file=f'./time_watch.log', mode='w')
+        else:
+            self.__file = None
+
+    ''' destructor.
+    Args:
+        log_file (bool, optional): write message on the log file or not.
+    '''
 
     def __del__(self):
+        if self.__file is not None:
+            self.__file.close()
+            del self.__file
         del self.__actions
 
     ''' start measuring time.
@@ -48,8 +63,11 @@ class TimeWatch:
 
     def print(self, action_name: str) -> None:
         elapsed_time = self.__actions[action_name]["elapsed_time"]
-        print(
-            f"[action name : {action_name} ] elapsed time : {elapsed_time * 1000}[ms]")
+        message: str = f"[action name : {action_name} ] elapsed time : {elapsed_time * 1000}[ms]"
+        print(message)
+        if self.__file is not None:
+            # if log_file opsion is True, write message on the log file
+            self.__file.write(message + '\n')
 
     ''' clear instance variable.
     '''
